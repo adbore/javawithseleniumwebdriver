@@ -1,0 +1,63 @@
+package crm.testcases;
+
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import crm.base.TestBase;
+import crm.pages.ContactsPage;
+import crm.pages.HomePage;
+import crm.pages.LoginPage;
+import crm.utility.TestUtil;
+
+public class HomePageTest extends TestBase {
+	
+	LoginPage loginPage;
+	HomePage homePage;
+	TestUtil testUtil;
+	ContactsPage contactsPage;
+	
+	public HomePageTest() {
+		super();
+	}
+	
+	//Test Case Should Be Separated -- Independent With Each Other
+	//Before Each Test Cases -- Launch The Browser And Login
+	//@Test -- Execute Test Cases
+	//After Each Test Cases -- Close The Browser
+	
+	@BeforeMethod
+	public void setUp() {
+		initialization();
+		loginPage = new LoginPage();
+		testUtil = new TestUtil();
+		contactsPage = new ContactsPage();
+		homePage = loginPage.login(prop.getProperty("username"), prop.getProperty("password"));
+	}
+	
+	@Test(priority=1)
+	public void verifyHomePageTitleTest() {
+	  String ActualHomePageTitle =	homePage.verifyHomePageTitle();
+	  String ExpectedHomePageTitle = "CRMPRO";
+	  Assert.assertEquals(ActualHomePageTitle, ExpectedHomePageTitle, ""
+	  		+ "Home Page Title Not Matched");
+	}
+	
+	@Test(priority=2)
+	public void verifyUserNameTest() {
+		testUtil.switchToFrame();
+		Assert.assertTrue(homePage.verifyCorrectUserName());
+	}
+	
+	@Test(priority=3)
+	public void verifyContactsLinkTest() {
+		testUtil.switchToFrame();
+		contactsPage = homePage.clickOnContactsLink();
+	}
+	@AfterMethod
+	public void tearDown() {
+		driver.quit();
+	}
+
+}
